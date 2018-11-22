@@ -18,3 +18,4 @@ docker-compose.yml.develop
 docker-compose.yml.prod
 /ssl
 composer.lock
+horizon.log
