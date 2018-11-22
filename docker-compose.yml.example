@@ -29,11 +29,10 @@ services:
     environment:
       ENV: develop
       SERVER_NAME: localhost
-      SSL: "on"
+      SSL: "off"
     volumes:
       - ./:/var/www
-      - ./docker/nginx_ssl.conf:/etc/nginx/conf.d/default.conf
-      - ./ssl:/var/www/ssl
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
     restart: unless-stopped
     depends_on:
       - php

@@ -47,13 +47,11 @@ RUN apt-get update && apt-get install -y \
     && pecl install imagick \
 	&& docker-php-ext-enable imagick
 
-RUN docker-php-ext-install pcntl \
-    mysqli \
-    pdo \
-    pdo_mysql \
-    pdo_pgsql \
-    pgsql && \
-    docker-php-ext-enable pdo_pgsql
+RUN docker-php-ext-install pcntl
+
+RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql
+
+RUN docker-php-ext-install pdo pdo_pgsql
 
 RUN docker-php-ext-install zip
 
@@ -68,7 +66,5 @@ RUN rm -r /var/lib/apt/lists/*
 RUN usermod -u 1000 www-data
 
 WORKDIR /var/www
-
-EXPOSE 9000
 
 CMD ["php-fpm"]
