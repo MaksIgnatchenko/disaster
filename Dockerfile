@@ -47,7 +47,8 @@ RUN apt-get update && apt-get install -y \
     && pecl install imagick \
 	&& docker-php-ext-enable imagick
 
-RUN docker-php-ext-install mysqli \
+RUN docker-php-ext-install pcntl \
+    mysqli \
     pdo \
     pdo_mysql \
     pdo_pgsql \

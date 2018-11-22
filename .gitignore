@@ -14,5 +14,7 @@ yarn-error.log
 .env
 .phpunit.result.cache
 docker-compose.yml
+docker-compose.yml.develop
+docker-compose.yml.prod
 /ssl
 composer.lock

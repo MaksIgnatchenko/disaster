@@ -1,0 +1,5 @@
+Horizon started successfully.
+[2018-11-22 16:25:56][2] Processing: App\Jobs\Test
+[2018-11-22 16:25:56][2] Processed:  App\Jobs\Test
+[2018-11-22 16:26:44][3] Processing: App\Jobs\Test
+[2018-11-22 16:26:44][3] Processed:  App\Jobs\Test
