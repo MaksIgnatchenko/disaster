@@ -50,6 +50,12 @@
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
+        ],
+        "install-script" : [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "composer install -on --ignore-platform-reqs --no-progress --no-dev",
+            "composer dump-autoload --optimize",
+            "@php artisan key:generate --ansi"
         ]
     },
     "config": {
