@@ -16,6 +16,5 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'device_id', 'push_token',
     ];
 }
