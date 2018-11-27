@@ -99,7 +99,10 @@ class AerisWeather
         return $this->fields;
     }
 
-    public function request ()
+    /**
+     * @return array|null
+     */
+    public function request () : ?array
     {
         $url = $this->isBatchRequest ? $this->buildBatchURL() : $this->buildURL();
         $curl = curl_init();
@@ -115,12 +118,16 @@ class AerisWeather
         return $result;
     }
 
-    private function buildURL () {
+    /**
+     * @return string
+     */
+    private function buildURL () : string
+    {
 
         return $this->baseUrl
             . $this->getEndpoint()
             . '/'
-            . $this->getAction()[0] ?? ''
+            . ($this->getAction()[0] ?? '')
             . '?'
             . 'client_id='.$this->clientID.'&'
             . 'client_secret='.$this->clientSecret.'&'
@@ -128,7 +135,11 @@ class AerisWeather
             . $this->buildFieldsQuery();
     }
 
-    private function buildBatchURL () {
+    /**
+     * @return string
+     */
+    private function buildBatchURL () : string
+    {
         $actions = $this->getAction();
         $lastElement = end($actions);
         reset($actions);
@@ -150,7 +161,6 @@ class AerisWeather
             . 'client_secret='.$this->clientSecret.'&'
             . $this->buildSettingsQuery()
             . $this->buildFieldsQuery();
-//        dd($url);
         return $url;
     }
 
@@ -178,5 +188,4 @@ class AerisWeather
         return $fieldsQuery;
     }
 }
-//https://api.aerisapi.com/batch?requests=/forecasts/Kharkiv,Ukraine,/forecasts/Kyiv,Ukraineclient_id=UR504DnPfiWFcHaVk98Gn&client_secret=VxKeIAhRQMOExciYhMsyTzVAEYEDEAxJLMidw4MC&
-//https://api.aerisapi.com/batch?requests=/forecasts/kharkiv,ukraine,/forecasts/kyiv,ukraine&client_id=UR504DnPfiWFcHaVk98Gn&client_secret=VxKeIAhRQMOExciYhMsyTzVAEYEDEAxJLMidw4MC&fields=loc, periods.minTempC&plimit=1
+
