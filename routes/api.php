@@ -11,16 +11,11 @@
 |
 */
 
+Route::get('user', 'UserController@get');
+
 Route::post('user', 'UserController@store');
 
 Route::put('user', 'UserController@update');
-
-Route::get('user', function() {
-    $user = \App\User::where('deviceId', 'qwerty125')
-        ->with(['locations', 'settings'])
-        ->first();
-    return response()->json($user);
-});
 
 Route::get('aeris', function() {
     $obj = new \App\Services\LocationBuilder('Kharkiv, Ukraine');
@@ -36,39 +31,39 @@ Route::get('forecast', function() {
 
 Route::get('test', function() {
     $locs = [
-        'kyiv, ukraine',
-        'aberdeen, england',
-        'birmingham, england',
-        'bristol, england',
-        'cambridge, england',
-        'chester, england',
-        'coventry, england',
-        'ely, england',
-        'leeds, england',
-        'lincoln, england',
-        'liverpool, england',
-        'manchester, england',
-        'newcastle, england',
-        'london, england',
-        'oxford, england',
-        'preston, england',
-        'salford, england',
-        'sheffield, england',
-        'wells, england',
-        'winchester, england',
-        'york, england',
-        'berlin, germany',
-        'hamburg, germany',
-        'asddas, germany',
-        'kharkiv,ukraine',
+//        'kyiv, ukraine',
+//        'aberdeen, england',
+//        'birmingham, england',
+//        'bristol, england',
+//        'cambridge, england',
+//        'chester, england',
+//        'coventry, england',
+//        'ely, england',
+//        'leeds, england',
+//        'lincoln, england',
+//        'liverpool, england',
+//        'manchester, england',
+//        'newcastle, england',
+//        'london, england',
+//        'oxford, england',
+//        'preston, england',
+//        'salford, england',
+//        'sheffield, england',
+//        'wells, england',
+//        'winchester, england',
+//        'york, england',
+//        'berlin, germany',
+//        'hamburg, germany',
+//        'asddas, germany',
+//        'kharkiv,ukraine',
     ];
     $obj = new \App\Services\WeatherHandler\AerisWeather();
     $obj->setEndpoint('forecasts');
     $obj->setAction($locs);
     $obj->setSettings([
         'plimit' => 1,
-        'from' => '2018-11-27',
-        'to' => '2018-11-27',
+        'from' => '2018-11-29',
+        'to' => '2018-11-29',
         'filter' => 'day',
     ]);
     $obj->setFields([
@@ -78,6 +73,10 @@ Route::get('test', function() {
         'periods.maxTempC',
         'periods.windSpeedMaxKPH'
     ]);
-    $collection = $obj->request()['response'];
-    dd($collection);
+    try {
+        $res = $obj->request();
+    } catch(\App\Exceptions\AerisApiErrorException $e) {
+        return 'error';
+    }
+    return $res->getResult();
 });

@@ -6,15 +6,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ApiCode;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Location;
 use App\Settings;
 use App\User;
+use Illuminate\Http\Request;
+use MarcinOrlowski\ResponseBuilder\ResponseBuilder;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends Controller
 {
-    public function store(StoreUserRequest $request)
+    public function get(Request $request) : Response
+    {
+        $userModel = app()[User::class];
+        $user = $userModel->where('deviceId', $request->header('deviceId'))
+            ->with(['locations', 'settings'])
+            ->first();
+        return ResponseBuilder::success($user);
+    }
+
+    public function store(StoreUserRequest $request) : Response
     {
         $user = app()[User::class];
         $user->fill($request->all());
@@ -28,17 +41,17 @@ class UserController extends Controller
         $locations = $location->insertOrCreate($request->locations);
         $user->locations()->sync($locations->pluck('id'));
 
-        return response()->json($user);
+        return ResponseBuilder::success();
     }
 
-    public function update(UpdateUserRequest $request)
+    public function update(UpdateUserRequest $request) : Response
     {
         $userModel = app()[User::class];
         $user = $userModel
             ->where('deviceId', $request->header('deviceId'))
             ->first();
         if (!$user) {
-//            TODO
+            return ResponseBuilder::error(ApiCode::DEVICE_NOT_FOUND);
         }
 
         $user->update($request->all());
@@ -57,9 +70,6 @@ class UserController extends Controller
         } else {
             $settings->update($request->all());
         }
-        $user = \App\User::where('deviceId', $request->header('deviceId'))
-            ->with(['locations', 'settings'])
-            ->first();
-        return response()->json($user);
+        return ResponseBuilder::success();
     }
 }

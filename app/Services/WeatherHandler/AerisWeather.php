@@ -6,6 +6,9 @@
 
 namespace App\Services\WeatherHandler;
 
+use App\Exceptions\AerisApiErrorException;
+use GuzzleHttp\Client;
+
 class AerisWeather
 {
     private $baseUrl;
@@ -16,6 +19,8 @@ class AerisWeather
     private $settings = null;
     private $isBatchRequest = false;
     private $fields = null;
+    private $client;
+    private $httpResponse = null;
 
     public function __construct ()
     {
@@ -100,32 +105,57 @@ class AerisWeather
     }
 
     /**
-     * @return array|null
+     * @return AerisWeather
+     * @throws AerisApiErrorException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function request () : ?array
+    public function request() : self
     {
-        $url = $this->isBatchRequest ? $this->buildBatchURL() : $this->buildURL();
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 5);
+        $uri = $this->isBatchRequest ? $this->buildBatchURI() : $this->buildURI();
+        $this->httpResponse = $this->getClient()
+            ->request(
+                'GET',
+                $uri
+            );
+        if ($this->httpResponse->getStatusCode() != 200) {
+            throw new AerisApiErrorException();
+        }
+        return $this;
+    }
 
-        $data = curl_exec($curl);
-        curl_close($curl);
+    /**
+     * @return array
+     */
+    public function getResult() : array
+    {
+        if ($this->httpResponse) {
+            return json_decode(
+                $this->httpResponse->getBody(),
+                true
+            );
+        }
+        return [];
+    }
 
-        $result = json_decode ($data, true);
+    /**
+     * @return Client
+     */
+    protected function getClient(): Client
+    {
+        if ($this->client == null) {
+            $this->client = new Client(['base_uri' => $this->baseUrl]);
+        }
 
-        return $result;
+        return $this->client;
     }
 
     /**
      * @return string
      */
-    private function buildURL () : string
+    private function buildURI () : string
     {
 
-        return $this->baseUrl
-            . $this->getEndpoint()
+        return $this->getEndpoint()
             . '/'
             . ($this->getAction()[0] ?? '')
             . '?'
@@ -138,7 +168,7 @@ class AerisWeather
     /**
      * @return string
      */
-    private function buildBatchURL () : string
+    private function buildBatchURI () : string
     {
         $actions = $this->getAction();
         $lastElement = end($actions);
@@ -152,8 +182,7 @@ class AerisWeather
                 . $action
                 . (($action === $lastElement) ? '' : ',');
         }
-        $url = $this->baseUrl
-            . 'batch'
+        $uri = 'batch'
             . '?requests='
             . $query
             . '&'
@@ -161,7 +190,7 @@ class AerisWeather
             . 'client_secret='.$this->clientSecret.'&'
             . $this->buildSettingsQuery()
             . $this->buildFieldsQuery();
-        return $url;
+        return $uri;
     }
 
     private function buildSettingsQuery()
