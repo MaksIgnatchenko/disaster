@@ -1,8 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-use GuzzleHttp\Client;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,12 +11,15 @@ use GuzzleHttp\Client;
 |
 */
 
-Route::post('user', function(){
+Route::post('user', 'UserController@store');
 
-});
+Route::put('user', 'UserController@update');
 
-Route::put('user', function(){
-
+Route::get('user', function() {
+    $user = \App\User::where('deviceId', 'qwerty125')
+        ->with(['locations', 'settings'])
+        ->first();
+    return response()->json($user);
 });
 
 Route::get('aeris', function() {
@@ -79,4 +79,5 @@ Route::get('test', function() {
         'periods.windSpeedMaxKPH'
     ]);
     $collection = $obj->request()['response'];
+    dd($collection);
 });

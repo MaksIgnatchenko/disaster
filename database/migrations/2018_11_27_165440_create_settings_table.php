@@ -15,6 +15,7 @@ class CreateSettingsTable extends Migration
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('user_id');
             $table->enum('tempUnit', ['c', 'f'])->default('c');
             $table->enum('windSpeedUnit', ['mph', 'kph', 'm/s'])->default('kph');
             $table->integer('minTemp')->default(-10);

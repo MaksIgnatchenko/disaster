@@ -10,5 +10,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Settings extends Model
 {
-    protected $table = 'my_flights';
+    protected $table = 'settings';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'tempUnit',
+        'windSpeedUnit',
+        'minTemp',
+        'maxTemp',
+        'timezone'
+    ];
 }

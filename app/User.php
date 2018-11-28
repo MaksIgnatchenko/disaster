@@ -6,11 +6,12 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class User extends Authenticatable
+class User extends Model
 {
-
     /**
      * The attributes that are mass assignable.
      *
@@ -20,38 +21,21 @@ class User extends Authenticatable
         'deviceId',
         'pushToken',
         'receipt',
-        'tempUnit',
-        'windSpeedUnit',
-        'minTemp',
-        'maxTemp',
-        'locations',
     ];
 
-    public function setLocationsAttribute(array $values) : void
+    /**
+     * @return BelongsToMany
+     */
+    public function locations() : BelongsToMany
     {
-        foreach ($values as $value) {
-            $location = Location::where('lat', $value['lat'])
-                ->where('long', $value['long'])
-                ->first();
-            if (!$location) {
-                $location = app()[Location::class];
-                $location->fill($value);
-                $location->save();
-            }
-            $this->locations()->attach($location->id);
-        }
-    }
-
-    public function getLocationsAttribute()
-    {
-        
+        return $this->belongsToMany('App\Location');
     }
 
     /**
-     * @return HasMany
+     * @return HasOne
      */
-    public function locations() : HasMany
+    public function settings() : HasOne
     {
-        return $this->hasMany('App\Location');
+        return $this->hasOne('App\Settings');
     }
 }

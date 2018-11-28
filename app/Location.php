@@ -7,8 +7,32 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 class Location extends Model
 {
-    //
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'place',
+        'country',
+        'lat',
+        'long'
+    ];
+
+    /**
+     * @param array $locationsData
+     * @return Collection
+     */
+    public function insertOrCreate(array $locationsData = null) : Collection
+    {
+        $locations = new Collection();
+        foreach($locationsData as $locationData) {
+            $locations->push($this->firstOrCreate($locationData));
+        }
+        return $locations;
+    }
 }
