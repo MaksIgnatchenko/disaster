@@ -11,12 +11,17 @@
 */
 
 Route::get('jobs', function() {
-    \App\Jobs\WeatherApiParse::dispatch();
+    \App\Jobs\ParseWeatherApi::dispatch(new \App\Location(), new \App\Services\WeatherHandler\AerisWeather());
     return rand(1, 100);
 });
 
 Route::get('test-job', function() {
    return Cache::tags(['weather'])->get(1);
+});
+
+Route::get('test1', function() {
+    \App\Jobs\Test::dispatch()->delay(now()->addMinutes(3));
+    return rand(1, 100);
 });
 
 Route::get('user', 'UserController@get');

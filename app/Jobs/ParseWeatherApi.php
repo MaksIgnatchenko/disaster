@@ -1,9 +1,14 @@
 <?php
+/**
+ * Created by Maksym Ignatchenko, Appus Studio LP on 26.11.2018
+ *
+ */
 
 namespace App\Jobs;
 
 use App\Location;
 use App\Services\WeatherHandler\AerisWeather;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -33,10 +38,12 @@ class ParseWeatherApi implements ShouldQueue
         $this->locationModel = app()[Location::class];
         $this->apiHandler = new AerisWeather();
         $this->apiHandler->setEndpoint('forecasts');
+
+        $today = Carbon::now()->toDateString();
         $this->apiHandler->setSettings([
             'plimit' => 1,
-            'from' => \Carbon\Carbon::now()->toDateString(),
-            'to' => \Carbon\Carbon::now()->toDateString(),
+            'from' => $today,
+            'to' => $today,
             'filter' => 'day',
         ]);
         $this->apiHandler->setFields([
@@ -83,7 +90,7 @@ class ParseWeatherApi implements ShouldQueue
                 }
             }
         }
-        Cache::tags(['weather'])->flsush();
+        Cache::tags(['weather'])->flush();
         Cache::tags(['weather'])->putMany($resultSet, 1500);
     }
 }

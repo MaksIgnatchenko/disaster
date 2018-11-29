@@ -16,8 +16,10 @@ class CreateUsersTalbe extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('deviceId');
-            $table->string('pushToken');
-            $table->text('receipt');
+            $table->string('pushToken')->nullable();
+            $table->text('receipt')->nullable();
+            $table->string('receiptSecret')->nullable();
+            $table->date('expirationDate')->nullable();
             $table->timestamps();
         });
     }
