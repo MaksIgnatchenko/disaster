@@ -75,8 +75,13 @@ Route::get('test', function() {
     ]);
     try {
         $res = $obj->request();
-    } catch(\App\Exceptions\AerisApiErrorException $e) {
-        return 'error';
+    } catch(\App\Services\WeatherHandler\Exceptions\AerisApiConnectErrorException $e) {
+        return $e->getMessage();
     }
-    return $res->getResult();
+    try {
+		$result =  $res->getResult();
+	} catch (\App\Services\WeatherHandler\Exceptions\AerisApiResponseErrorException $e) {
+		return $e->getMessage();
+	}
+	return $result;
 });

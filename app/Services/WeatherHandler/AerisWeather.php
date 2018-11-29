@@ -6,8 +6,10 @@
 
 namespace App\Services\WeatherHandler;
 
-use App\Exceptions\AerisApiErrorException;
+use App\Services\WeatherHandler\Exceptions\AerisApiConnectErrorException;
+use App\Services\WeatherHandler\Exceptions\AerisApiResponseErrorException;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ConnectException;
 
 class AerisWeather
 {
@@ -104,35 +106,40 @@ class AerisWeather
         return $this->fields;
     }
 
-    /**
-     * @return AerisWeather
-     * @throws AerisApiErrorException
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
+	/**
+	 * @return AerisWeather
+	 * @throws AerisApiConnectErrorException
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 */
     public function request() : self
     {
         $uri = $this->isBatchRequest ? $this->buildBatchURI() : $this->buildURI();
-        $this->httpResponse = $this->getClient()
-            ->request(
-                'GET',
-                $uri
-            );
-        if ($this->httpResponse->getStatusCode() != 200) {
-            throw new AerisApiErrorException();
-        }
+        try {
+			$this->httpResponse = $this->getClient()
+				->request(
+					'GET',
+					$uri
+				);
+		} catch (ConnectException $e) {
+			throw new AerisApiConnectErrorException('Connect error');
+		}
         return $this;
     }
 
-    /**
-     * @return array
-     */
+	/**
+	 * @return array
+	 * @throws AerisApiResponseErrorException
+	 */
     public function getResult() : array
     {
         if ($this->httpResponse) {
-            return json_decode(
+            $result = json_decode(
                 $this->httpResponse->getBody(),
                 true
             );
+            if ($result['error']) {
+            	throw new AerisApiResponseErrorException($result['error']['description']);
+			};
         }
         return [];
     }
