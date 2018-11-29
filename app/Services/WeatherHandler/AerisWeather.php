@@ -121,7 +121,7 @@ class AerisWeather
 					$uri
 				);
 		} catch (ConnectException $e) {
-			throw new AerisApiConnectErrorException('Connect error');
+			throw new AerisApiConnectErrorException('Aeris api connect error');
 		}
         return $this;
     }
@@ -138,8 +138,10 @@ class AerisWeather
                 true
             );
             if ($result['error']) {
-            	throw new AerisApiResponseErrorException($result['error']['description']);
+            	throw new AerisApiResponseErrorException('Aeris api error' . $result['error']['description']);
 			};
+            $this->httpResponse = null;
+            return $result['response']['responses'] ?? [];
         }
         return [];
     }
@@ -200,6 +202,9 @@ class AerisWeather
         return $uri;
     }
 
+    /**
+     * @return string
+     */
     private function buildSettingsQuery()
     {
         $settingsQuery = '';
@@ -211,6 +216,9 @@ class AerisWeather
         return $settingsQuery;
     }
 
+    /**
+     * @return string
+     */
     private function buildFieldsQuery()
     {
         $fieldsQuery = '';

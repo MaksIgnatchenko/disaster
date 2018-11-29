@@ -18,19 +18,36 @@ use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends Controller
 {
-    public function get(Request $request) : Response
+    private $userModel;
+
+    public function __construct()
     {
-        $userModel = app()[User::class];
-        $user = $userModel->where('deviceId', $request->header('deviceId'))
+        $this->userModel = app()[User::class];
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    public function get(Request $request): Response
+    {
+        $user = $this->userModel
+            ->where('deviceId', $request->header('deviceId'))
             ->with(['locations', 'settings'])
             ->first();
+        if (!$user) {
+            return ResponseBuilder::error(ApiCode::DEVICE_NOT_FOUND);
+        }
         return ResponseBuilder::success($user);
     }
 
-    public function store(StoreUserRequest $request) : Response
+    /**
+     * @param StoreUserRequest $request
+     * @return Response
+     */
+    public function store(StoreUserRequest $request): Response
     {
-        $user = app()[User::class];
-        $user->fill($request->all());
+        $user = $this->userModel->fill($request->all());
         $user->save();
 
         $settings = app()[Settings::class];
@@ -44,10 +61,13 @@ class UserController extends Controller
         return ResponseBuilder::success();
     }
 
-    public function update(UpdateUserRequest $request) : Response
+    /**
+     * @param UpdateUserRequest $request
+     * @return Response
+     */
+    public function update(UpdateUserRequest $request): Response
     {
-        $userModel = app()[User::class];
-        $user = $userModel
+        $user = $this->userModel
             ->where('deviceId', $request->header('deviceId'))
             ->first();
         if (!$user) {
