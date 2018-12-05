@@ -42,7 +42,7 @@ services:
     volumes:
       - ./:/var/www
       - ./docker/crontasks:/var/crontasks
-    command: /bin/bash -c "cp /var/crontasks /var/spool/cron/crontabs/root && chown root:root /var/spool/cron/crontabs/root && chmod 0600 /var/spool/cron/crontabs/root && composer install-script && /usr/bin/supervisord -n -c /var/www/docker/supervisord.conf"
+    command: /bin/bash -c "cp /var/crontasks /var/spool/cron/crontabs/root && chown root:root /var/spool/cron/crontabs/root && chmod 0600 /var/spool/cron/crontabs/root && /usr/bin/supervisord -n -c /var/www/docker/supervisord.conf"
     depends_on:
       - db
       - redis

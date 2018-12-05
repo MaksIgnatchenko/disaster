@@ -21,7 +21,7 @@ class UsersTableSeeder extends Seeder
             $now->subDays(10)->toDateString(),
 
         ];
-        $locations = \App\Location::all();
+        $locations = \App\Location::all()->pluck('id');
         for ($i = 0; $i < 100; $i++) {
             $user = \App\User::create([
                 'deviceId' => str_random(),
@@ -30,9 +30,15 @@ class UsersTableSeeder extends Seeder
                 'receiptSecret' => (rand(1,3) > 1) ? base64_encode(str_random(50)) : null,
                 'expirationDate' => $dates[array_rand($dates)]
             ]);
-            $settings = \App\Settings::create([
-                ''
+            $settings = new \App\Settings();
+			$settings->fill([
+                'tempUnit' => (rand(1, 2) > 1) ? 'c' : 'f',
+				'windSpeedUnit' => (rand(1, 2) > 1) ? 'kph' : 'mph',
+				'minTemp' => rand(-20, 0),
+				'maxTemp' => rand(20, 40),
             ]);
+			$user->settings()->save($settings);
+			$user->locations()->sync($locations->random());
         }
     }
 }
