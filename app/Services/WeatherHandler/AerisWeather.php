@@ -13,6 +13,7 @@ use GuzzleHttp\Exception\ConnectException;
 
 class AerisWeather
 {
+    public const LIMIT_ITEMS_BATCH_REQUEST = 25;
     private $baseUrl;
     private $clientID;
     private $clientSecret;

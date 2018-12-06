@@ -23,6 +23,7 @@ class ParseWeatherApi implements ShouldQueue
 
     private $locationModel;
     private $apiHandler;
+    private $cacheTtl;
 
     /**
      * Create a new job instance.
@@ -35,6 +36,7 @@ class ParseWeatherApi implements ShouldQueue
 
     public function handle()
     {
+        $this->cacheTtl = config('app_settings.cache_api_result_ttl');
         $this->locationModel = app()[Location::class];
         $this->apiHandler = new AerisWeather();
         $this->apiHandler->setEndpoint('forecasts');
@@ -55,7 +57,7 @@ class ParseWeatherApi implements ShouldQueue
         ]);
 
         $locations = $this->locationModel->all();
-        $chunks = $locations->chunk(2);
+        $chunks = $locations->chunk(AerisWeather::LIMIT_ITEMS_BATCH_REQUEST);
         $resultSet = [];
         foreach ($chunks as $chunk) {
             $batchRequestLocations = [];
@@ -91,6 +93,6 @@ class ParseWeatherApi implements ShouldQueue
             }
         }
         Cache::tags(['weather'])->flush();
-        Cache::tags(['weather'])->putMany($resultSet, 1500);
+        Cache::tags(['weather'])->putMany($resultSet, $this->cacheTtl);
     }
 }
