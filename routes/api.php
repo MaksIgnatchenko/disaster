@@ -36,68 +36,8 @@ Route::get('aeris', function() {
     dd($response);
 });
 
-Route::get('forecast', function() {
-    $obj = new \App\Services\Forecast('Kharkiv, Ukraine');
-    $response = $obj->getForecast();
-    dd($response);
-});
 
 Route::get('test', function() {
-//    $locs = [
-//        'kyiv, ukraine',
-//        'aberdeen, england',
-//        'birmingham, england',
-//        'bristol, england',
-//        'cambridge, england',
-//        'chester, england',
-//        'coventry, england',
-//        'ely, england',
-//        'leeds, england',
-//        'lincoln, england',
-//        'liverpool, england',
-//        'manchester, england',
-//        'newcastle, england',
-//        'london, england',
-//        'oxford, england',
-//        'preston, england',
-//        'salford, england',
-//        'sheffield, england',
-//        'wells, england',
-//        'winchester, england',
-//        'york, england',
-//        'berlin, germany',
-//        'hamburg, germany',
-//        'asddas, germany',
-//        'kharkiv,ukraine',
-//    ];
-//    $obj = new \App\Services\WeatherHandler\AerisWeather();
-//    $obj->setEndpoint('forecasts');
-//    $obj->setAction($locs);
-//    $obj->setSettings([
-//        'plimit' => 1,
-//        'from' => '2018-11-29',
-//        'to' => '2018-11-29',
-//        'filter' => 'day',
-//    ]);
-//    $obj->setFields([
-//        'loc',
-//        'periods.dateTimeISO',
-//        'periods.minTempC',
-//        'periods.maxTempC',
-//        'periods.windSpeedMaxKPH'
-//    ]);
-//    try {
-//        $res = $obj->request();
-//    } catch(\App\Services\WeatherHandler\Exceptions\AerisApiConnectErrorException $e) {
-//        return $e->getMessage();
-//    }
-//    try {
-//		$result =  $res->getResult();
-//	} catch (\App\Services\WeatherHandler\Exceptions\AerisApiResponseErrorException $e) {
-//		return $e->getMessage();
-//	}
-//	return $result;
-
     $apiHandler = new \App\Services\WeatherHandler\AerisWeather();
     $apiHandler->setEndpoint('forecasts');
     $apiHandler->setSettings([
@@ -156,4 +96,19 @@ Route::get('test', function() {
     Cache::tags(['weather'])->flush();
     Cache::tags(['weather'])->putMany($resultSet, 1500);
     return response()->json($resultSet);
+});
+
+Route::get('test-cache', function () {
+//	dd(Cache::tags(['weather'])->hgetall());
+	dd(\Illuminate\Support\Facades\Redis::get('laravel_cache:tag:weather:key'));
+});
+
+Route::get('test-disaster', function() {
+	$apiHandler = new \App\Services\DisasterHandler\DisasterApiHandler();
+	try {
+		$apiHandler->request();
+	} catch (\App\Services\DisasterHandler\Exceptions\HiszRsoeApiConnectErrorException $e) {
+		Log::error($e->getMessage());
+	}
+	dd($apiHandler->getResult());
 });
