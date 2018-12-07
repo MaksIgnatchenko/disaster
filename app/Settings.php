@@ -22,6 +22,16 @@ class Settings extends Model
         'windSpeedUnit',
         'minTemp',
         'maxTemp',
-        'timezone'
+        'timezone',
+		'disasterCategories',
     ];
+
+	/**
+	 * The attributes that should be cast to native types.
+	 *
+	 * @var array
+	 */
+	protected $casts = [
+		'disasterCategories' => 'array',
+	];
 }

@@ -101,7 +101,7 @@ Route::get('test', function() {
 Route::get('test-cache', function () {
 //	dd(Cache::tags(['weather'])->get(1));
 //	dd(\Illuminate\Support\Facades\Redis::get(1));
-    dd(Cache::tags(['disaster_meta'])->get('keys'));
+    dd(Cache::tags(['disaster'])->get(65607));
 });
 
 Route::get('test-disaster', function() {
@@ -137,5 +137,9 @@ Route::get('dis-job', function() {
 //    $x = [1, 2, 3];
 //    $y = print_r($x, true);
 //    echo $y;
+});
+
+Route::get('test-user', function() {
+	dd(\App\User::with(['locations', 'settings'])->first());
 });
 

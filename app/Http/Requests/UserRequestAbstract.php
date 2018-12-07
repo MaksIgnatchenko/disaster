@@ -8,6 +8,8 @@ namespace App\Http\Requests;
 
 use App\Enums\TempUnitEnum;
 use App\Enums\WindSpeedUnitEnum;
+use App\Helpers\DisasterCategories;
+use App\Rules\DisasterCategoriesRule;
 use App\Rules\TimeZoneRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -43,6 +45,8 @@ class UserRequestAbstract extends FormRequest
             'locations.*.long' => 'required|numeric|between:-180,180',
             'locations.*.place' => 'string|min:1|max:255',
             'locations.*.country' => 'string|min:1|max:255',
+			'disasterCategories' => ['array', new DisasterCategoriesRule(DisasterCategories::getAvailableCategories())],
+			'disasterCategories.*' => 'distinct',
         ];
     }
 }

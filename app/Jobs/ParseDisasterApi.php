@@ -47,7 +47,7 @@ class ParseDisasterApi implements ShouldQueue
                 $disastersMetaData['keys'][] = $disaster['cid'];
             }
         }
-//        Log::alert(print_r($disastersMetaData, true));
+//        Log::alert(print_r($disasters, true));
 //        $disastersMetaData['cid_above'] = $cidAbove ?? 1;
 //        Log::alert($disastersMetaData['cid_above']);
 //        Log::info(print_r($disastersMetaData, true));

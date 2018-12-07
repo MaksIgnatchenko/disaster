@@ -21,6 +21,7 @@ class CreateSettingsTable extends Migration
             $table->integer('minTemp')->default(-10);
             $table->integer('maxTemp')->default(30);
             $table->string('timezone')->default('Europe/London');
+            $table->json('disasterCategories')->nullable();
             $table->timestamps();
         });
     }
