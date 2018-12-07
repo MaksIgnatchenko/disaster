@@ -9,6 +9,7 @@ namespace App\Services\DisasterHandler;
 use App\Services\DisasterHandler\Exceptions\HiszRsoeApiConnectErrorException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
+use Illuminate\Support\Collection;
 
 class DisasterApiHandler
 {
@@ -46,10 +47,9 @@ class DisasterApiHandler
 		return $this;
 	}
 
-	/**
-	 * @return array
-	 * @throws AerisApiResponseErrorException
-	 */
+    /**
+     * @return array
+     */
 	public function getResult() : array
 	{
 		if ($this->httpResponse) {

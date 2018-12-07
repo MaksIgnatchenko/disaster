@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('pushToken')->nullable();
             $table->text('receipt')->nullable();
             $table->string('receiptSecret')->nullable();
-            $table->date('expirationDate')->nullable();
+            $table->timestamp('expirationDate')->nullable();
             $table->timestamps();
         });
     }

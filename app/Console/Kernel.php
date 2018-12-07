@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->job(new ParseDisasterApi())->everyMinute();
+//        $schedule->job(new ParseDisasterApi())->everyMinute();
         $schedule->command('horizon:snapshot')->everyMinute();
     }
 

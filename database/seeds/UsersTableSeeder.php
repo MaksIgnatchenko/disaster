@@ -28,7 +28,6 @@ class UsersTableSeeder extends Seeder
                 'pushToken' => str_random(),
                 'receipt' => (rand(1,3) > 1) ? base64_encode(str_random(50)) : null,
                 'receiptSecret' => (rand(1,3) > 1) ? base64_encode(str_random(50)) : null,
-                'expirationDate' => $dates[array_rand($dates)]
             ]);
             $settings = new \App\Settings();
 			$settings->fill([

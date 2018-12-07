@@ -36,18 +36,16 @@ class ReceiptValidator
      * @return string|null
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getStatus() : ?string
+    public function getExpiresDate() : ?string
     {
         try {
-            $pendingRenewalInfo = new PendingRenewalInfo(
-                $this->validator
+            $response = $this->validator
                     ->validate()
-                    ->getRawData()
-            );
-            return $pendingRenewalInfo->getStatus();
-        } catch (RunTimeException $e) {
+                    ->getRawData();
+        } catch (\Exception $e) {
             Log::error('Unable to get response from itunes server');
             return null;
         }
+        return $response['expires_date'] ?? null;
     }
 }
