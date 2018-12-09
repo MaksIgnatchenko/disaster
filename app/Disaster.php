@@ -2,9 +2,10 @@
 
 namespace App;
 
+use App\Interfaces\DisasterModel;
 use Illuminate\Database\Eloquent\Model;
 
-class Disaster extends Model
+class Disaster extends Model implements DisasterModel
 {
     /**
      * The attributes that are mass assignable.

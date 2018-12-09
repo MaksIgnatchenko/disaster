@@ -41,8 +41,6 @@ class UserRequestAbstract extends FormRequest
             'minTemp' => 'integer|min:-100|max:100',
             'maxTemp' => 'integer|min:-100|max:100',
             'timezone' => [new TimeZoneRule()],
-            'locations.*.lat' => 'required|numeric|between:-90,90',
-            'locations.*.long' => 'required|numeric|between:-180,180',
             'locations.*.place' => 'string|min:1|max:255',
             'locations.*.country' => 'string|min:1|max:255',
 			'disasterCategories' => ['array', new DisasterCategoriesRule(DisasterCategories::getAvailableCategories())],

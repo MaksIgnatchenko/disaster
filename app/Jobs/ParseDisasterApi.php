@@ -6,9 +6,10 @@
 
 namespace App\Jobs;
 
-use App\Disaster;
-use App\Services\DisasterHandler\DisasterApiHandler;
-use App\Services\DisasterHandler\Exceptions\HiszRsoeApiConnectErrorException;
+use App\Helpers\DisasterCategories;
+use App\Services\DisasterHandler\DisasterHandlerInterface;
+use App\Services\DisasterHandler\Exceptions\DisasterApiConnectErrorException;
+use App\Services\DisasterHandler\Exceptions\DisasterApiResponseErrorException;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -23,23 +24,49 @@ class ParseDisasterApi implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private $apiHandler;
+    private $disasterModelName;
+    private $disasterModel;
+
+    /**
+     * Create a new job instance.
+     *
+     * @param DisasterHandlerInterface $apiHandler
+     * @param string $disasterModelName
+     */
+    public function __construct(DisasterHandlerInterface $apiHandler, string $disasterModelName)
+    {
+        $this->apiHandler = $apiHandler;
+        $this->disasterModelName = $disasterModelName;
+    }
 
     public function handle()
     {
-        $cidAbove = DB::table('disasters')->max('cid');
-        $this->apiHandler = new DisasterApiHandler($cidAbove);
+        $this->disasterModel = new $this->disasterModelName();
+        $minCid = $this->disasterModel->max('cid');
+        $this->apiHandler->setOptions([
+            'minCid' => $minCid,
+        ]);
         try {
             $this->apiHandler->request();
-        } catch (HiszRsoeApiConnectErrorException $e) {
+        } catch (DisasterApiConnectErrorException $e) {
             Log::error($e->getMessage());
+            exit;
         }
-        $response = $this->apiHandler->getResult();
+        try {
+            $response = $this->apiHandler->getResult();
+        } catch (DisasterApiResponseErrorException $e) {
+            Log::alert($e->getMessage());
+            exit();
+        }
 
-        $today = Carbon::today();
+        $yesterday = Carbon::yesterday();
         $disasters = [];
         foreach ($response as $item) {
             $disasterDate = Carbon::parse($item['event_date']);
-            if ($disasterDate->greaterThanOrEqualTo($today)) {
+            if ($disasterDate->greaterThanOrEqualTo($yesterday)
+                &&
+                in_array($item['category_code'], DisasterCategories::getAvailableCategories())
+            ) {
                 $disasters[] = [
                     'cid' => $item['cid'],
                     'event_date' => $item['event_date'],
@@ -50,9 +77,11 @@ class ParseDisasterApi implements ShouldQueue
                     'description' => $item['description'],
                 ];
             }
-            Log::alert(print_r($disasters, true));
-        DB::table('disasters')->delete();
-        Disaster::insert($disasters);
         }
+        DB::table($this->disasterModel
+            ->getTable()
+        )->whereDate('event_date', '>=', $yesterday->toDateString())
+            ->delete();
+        $this->disasterModelName::insert($disasters);
     }
 }

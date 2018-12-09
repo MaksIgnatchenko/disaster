@@ -6,8 +6,8 @@
 
 namespace App\Services\DisasterHandler\Exceptions;
 
+use Exception;
 
-class HiszRsoeApiConnectErrorException extends \Exception
+class DisasterApiConnectErrorException extends Exception
 {
-
 }

@@ -17,8 +17,6 @@ class CreateLocationsTable extends Migration
             $table->increments('id');
             $table->string('country');
             $table->string('place')->nullable();
-            $table->decimal('lat');
-            $table->decimal('long');
             $table->timestamps();
         });
     }

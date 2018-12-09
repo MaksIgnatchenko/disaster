@@ -9,9 +9,11 @@ namespace App\Services\WeatherHandler;
 use App\Services\WeatherHandler\Exceptions\AerisApiConnectErrorException;
 use App\Services\WeatherHandler\Exceptions\AerisApiResponseErrorException;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
+use Illuminate\Support\Facades\Log;
 
-class AerisWeather
+class AerisWeather implements WeatherHandlerInterface
 {
     public const LIMIT_ITEMS_BATCH_REQUEST = 25;
     private $baseUrl;
@@ -112,7 +114,7 @@ class AerisWeather
 	 * @throws AerisApiConnectErrorException
 	 * @throws \GuzzleHttp\Exception\GuzzleException
 	 */
-    public function request() : self
+    public function request() : WeatherHandlerInterface
     {
         $uri = $this->isBatchRequest ? $this->buildBatchURI() : $this->buildURI();
         try {
@@ -121,7 +123,7 @@ class AerisWeather
 					'GET',
 					$uri
 				);
-		} catch (ConnectException $e) {
+		} catch (ClientException $e) {
 			throw new AerisApiConnectErrorException('Aeris api connect error');
 		}
         return $this;
@@ -165,7 +167,7 @@ class AerisWeather
     private function buildURI () : string
     {
 
-        return $this->getEndpoint()
+        $uri = $this->getEndpoint()
             . '/'
             . ($this->getAction()[0] ?? '')
             . '?'
@@ -173,6 +175,7 @@ class AerisWeather
             . 'client_secret='.$this->clientSecret.'&'
             . $this->buildSettingsQuery()
             . $this->buildFieldsQuery();
+        return $uri;
     }
 
     /**

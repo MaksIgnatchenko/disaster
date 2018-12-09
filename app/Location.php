@@ -19,15 +19,13 @@ class Location extends Model
     protected $fillable = [
         'place',
         'country',
-        'lat',
-        'long'
     ];
 
     /**
      * @param array $locationsData
      * @return Collection
      */
-    public function insertOrCreate(array $locationsData = null) : Collection
+    public function batchFirstOrCreate(array $locationsData = null) : Collection
     {
         $locations = new Collection();
         foreach($locationsData as $locationData) {

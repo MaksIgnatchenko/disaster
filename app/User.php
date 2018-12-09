@@ -6,6 +6,8 @@
 
 namespace App;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -21,6 +23,8 @@ class User extends Model
         'deviceId',
         'pushToken',
         'receipt',
+        'receiptSecret',
+        'expirationDate',
     ];
 
     /**
@@ -37,5 +41,16 @@ class User extends Model
     public function settings() : HasOne
     {
         return $this->hasOne('App\Settings');
+    }
+
+    /**
+     * @param $query
+     * @return Builder
+     */
+    public function scopeActive($query) : Builder
+    {
+        return $query
+            ->whereDate('expirationDate', '>=', Carbon::today()->toDateString())
+            ->whereNotNull('expirationDate');
     }
 }

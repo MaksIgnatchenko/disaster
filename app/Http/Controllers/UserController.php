@@ -55,7 +55,7 @@ class UserController extends Controller
         $user->settings()->save($settings);
 
         $location = app()[Location::class];
-        $locations = $location->insertOrCreate($request->locations);
+        $locations = $location->batchFirstOrCreate($request->locations);
         $user->locations()->sync($locations->pluck('id'));
 
         return ResponseBuilder::success();
