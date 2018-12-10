@@ -6,6 +6,7 @@
 
 namespace App\Jobs;
 
+use App\Services\PushTimeDetector;
 use App\Services\WeatherHandler\AerisWeather;
 use App\User;
 use Illuminate\Bus\Queueable;
@@ -47,6 +48,7 @@ class NotificateUserJob implements ShouldQueue
      */
     public function handle()
     {
+    	$timeDetector = new PushTimeDetector($this->user->settings->timezone);
         $locations = $this->user->locations;
         $countries = $this->user->locations->pluck('country');
         $disasterCategories = $this->user->settings->disasterCategories;
@@ -60,8 +62,9 @@ class NotificateUserJob implements ShouldQueue
                 $this->user->pushToken,
                 $title,
                 $message
-            );
+            )->delay(now()->addMinutes($timeDetector->getRemainingMinutes()));
         }
-        ParseWeatherApi::dispatch(new AerisWeather(), $locations, $this->user);
+        ParseWeatherApi::dispatch(new AerisWeather(), $locations, $this->user)
+			->delay(now()->addMinutes($timeDetector->getRemainingMinutes()));
     }
 }

@@ -10,4 +10,8 @@ return [
      * Frequency of api analysis and sending push notifications (times per day)
      */
     'parse_api_intensity' => 1,
+
+	'morning_push_time' => '08:00',
+
+	'evening_push_time' => '20:00',
 ];

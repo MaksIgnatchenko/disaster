@@ -21,6 +21,16 @@ class UsersTableSeeder extends Seeder
             $now->subDays(10)->toDateString(),
 
         ];
+        $timezones = [
+        	'America/Adak',
+			'Asia/Aden',
+			'Australia/ACT',
+			'Europe/Amsterdam',
+			'Europe/Athens',
+			'Europe/London',
+			'America/New_York',
+
+		];
         $locations = \App\Location::all()->pluck('id');
         for ($i = 0; $i < 100; $i++) {
             $user = \App\User::create([
@@ -35,6 +45,7 @@ class UsersTableSeeder extends Seeder
 				'windSpeedUnit' => (rand(1, 2) > 1) ? 'kph' : 'mph',
 				'minTemp' => rand(-20, 0),
 				'maxTemp' => rand(20, 40),
+				'timezone' => $timezones[array_rand($timezones)],
             ]);
 			$user->settings()->save($settings);
 			$user->locations()->sync($locations->random());

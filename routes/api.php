@@ -63,17 +63,13 @@ Route::get('dis-del', function() {
     \Illuminate\Support\Facades\DB::table('disasters')->delete();
 });
 
-Route::get('x', function(\App\Disaster $obj) {
-    $user = \App\User::all()->first();
-    $countries = $user->locations->pluck('country');
-    $disasterCategories = $user->settings->disasterCategories;
-    $disasters = \App\Disaster::whereIn('country', $countries)
-        ->whereIn('category_code', $disasterCategories)
-        ->get();
-    foreach($disasters as $disaster) {
-//        Fire event for push
-    }
-
+Route::get('x', function() {
+	$tz = \App\User::first()->settings->timezone;
+//	$string = \Carbon\Carbon::today()->toDateString() . ' ' . config('app_settings.morning_push_time');
+	$string = \Carbon\Carbon::today()->toDateString() . ' ' . config('app_settings.evening_push_time');
+	$pushTime = \Carbon\Carbon::createFromTimeString($string);
+	$userTime = \Carbon\Carbon::now($tz);
+	$diff = $userTime->diffInMinutes($pushTime, false);
 });
 
 
