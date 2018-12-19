@@ -16,9 +16,29 @@ class DisasterCategories
 	public static function getAvailableCategories(): array
 	{
 		return [
-			'TS',
-			'EX',
-			'BH',
+		    'AV',
+            'BH',
+			'CC',
+            'CW',
+            'CB',
+            'EQ',
+            'ST',
+            'FR',
+            'FF',
+            'FL',
+            'WF',
+            'GW',
+            'HT',
+            'LS',
+            'MG',
+            'NC',
+            'SS',
+            'SE',
+            'EC',
+            'TO',
+            'TS',
+            'VA',
+            'VE',
 		];
 	}
 }

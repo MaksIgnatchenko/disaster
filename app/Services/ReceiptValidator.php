@@ -23,7 +23,7 @@ class ReceiptValidator
      * @param $receiptBase64Data
      * @param $sharedSecret
      */
-    public function __construct($receiptBase64Data, $sharedSecret)
+    public function __construct($receiptBase64Data, $sharedSecret = null)
     {
         $this->validator = new iTunesValidator(iTunesValidator::ENDPOINT_SANDBOX);
         $this->validator->setReceiptData($receiptBase64Data);
@@ -36,7 +36,7 @@ class ReceiptValidator
      * @return string|null
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getExpiresDate() : ?string
+    public function getExpiresDate()
     {
         try {
             $response = $this->validator
@@ -46,6 +46,7 @@ class ReceiptValidator
             Log::error('Unable to get response from itunes server');
             return null;
         }
-        return $response['expires_date'] ?? null;
+        return $response;
+//        return $response['expires_date'] ?? null;
     }
 }

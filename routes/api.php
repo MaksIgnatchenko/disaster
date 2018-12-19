@@ -23,7 +23,7 @@ Route::get('aeris', function() {
 
 Route::get('test-sub', function() {
 //    \App\Jobs\CheckSubscription::dispatch();
-    \App\Jobs\ParseWeatherApi::dispatch();
+//    \App\Jobs\ParseWeatherApi::dispatch();
 //    \App\Jobs\CheckUsersSubscriptions::dispatch();
 //    \App\Jobs\ParseDisasterApi::dispatch(new \App\Services\DisasterHandler\HiszRsoeApiHandler\HiszRsoeApiHandler(), \App\Disaster::class);
 //    \App\Jobs\ParseDisasterApi::dispatch();
@@ -63,13 +63,12 @@ Route::get('dis-del', function() {
     \Illuminate\Support\Facades\DB::table('disasters')->delete();
 });
 
-Route::get('x', function() {
-	$tz = \App\User::first()->settings->timezone;
-//	$string = \Carbon\Carbon::today()->toDateString() . ' ' . config('app_settings.morning_push_time');
-	$string = \Carbon\Carbon::today()->toDateString() . ' ' . config('app_settings.evening_push_time');
-	$pushTime = \Carbon\Carbon::createFromTimeString($string);
-	$userTime = \Carbon\Carbon::now($tz);
-	$diff = $userTime->diffInMinutes($pushTime, false);
+Route::post('res', function(\Illuminate\Http\Request $request) {
+    $receipt = $request->get('receipt');
+    $secret = $request->get('secret') ?? null;
+    $handler = new \App\Services\ReceiptValidator($receipt, $secret);
+    $response = $handler->getExpiresDate();
+    dd($response);
 });
 
 
