@@ -36,15 +36,6 @@ class UserRequestAbstract extends FormRequest
         return [
             'pushToken' => 'string|min:1|max:255',
             'receipt' => 'string|min:1|max:65000',
-            'tempUnit' => [Rule::in(TempUnitEnum::toArray()), 'min:1', 'max:5'],
-            'windSpeedUnit' => [Rule::in(WindSpeedUnitEnum::toArray()), 'min:1', 'max:255'],
-            'minTemp' => 'integer|min:-100|max:100',
-            'maxTemp' => 'integer|min:-100|max:100',
-            'timezone' => [new TimeZoneRule()],
-            'locations.*.place' => 'string|min:1|max:255',
-            'locations.*.country' => 'string|min:1|max:255',
-			'disasterCategories' => ['array', new DisasterCategoriesRule(DisasterCategories::getAvailableCategories())],
-			'disasterCategories.*' => 'distinct',
         ];
     }
 }

@@ -22,10 +22,22 @@ class Location extends Model
     ];
 
     /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'id',
+        'pivot',
+        'created_at',
+        'updated_at',
+    ];
+
+    /**
      * @param array $locationsData
      * @return Collection
      */
-    public function batchFirstOrCreate(array $locationsData = null) : Collection
+    public function batchFirstOrCreate(array $locationsData) : Collection
     {
         $locations = new Collection();
         foreach($locationsData as $locationData) {
@@ -33,4 +45,5 @@ class Location extends Model
         }
         return $locations;
     }
+
 }

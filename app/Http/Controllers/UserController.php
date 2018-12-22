@@ -6,11 +6,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\ApiCode;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
-use App\Location;
-use App\Settings;
 use App\User;
 use Illuminate\Http\Request;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder;
@@ -31,14 +28,7 @@ class UserController extends Controller
      */
     public function get(Request $request): Response
     {
-        $user = $this->userModel
-            ->where('deviceId', $request->header('deviceId'))
-            ->with(['locations', 'settings'])
-            ->first();
-        if (!$user) {
-            return ResponseBuilder::error(ApiCode::DEVICE_NOT_FOUND);
-        }
-        return ResponseBuilder::success($user);
+        return ResponseBuilder::success($request->user()->toArray());
     }
 
     /**
@@ -49,15 +39,6 @@ class UserController extends Controller
     {
         $user = $this->userModel->fill($request->all());
         $user->save();
-
-        $settings = app()[Settings::class];
-        $settings->fill($request->all());
-        $user->settings()->save($settings);
-
-        $location = app()[Location::class];
-        $locations = $location->batchFirstOrCreate($request->locations);
-        $user->locations()->sync($locations->pluck('id'));
-
         return ResponseBuilder::success();
     }
 
@@ -67,29 +48,7 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request): Response
     {
-        $user = $this->userModel
-            ->where('deviceId', $request->header('deviceId'))
-            ->first();
-        if (!$user) {
-            return ResponseBuilder::error(ApiCode::DEVICE_NOT_FOUND);
-        }
-
-        $user->update($request->all());
-
-        if ($request->locations) {
-            $location = app()[Location::class];
-            $locations = $location->insertOrCreate($request->locations);
-            $user->locations()->sync($locations->pluck('id'));
-        }
-
-        $settings = $user->settings;
-        if (!$settings) {
-            $settings = app()[Settings::class];
-            $settings->fill($request->all());
-            $user->settings()->save($settings);
-        } else {
-            $settings->update($request->all());
-        }
+        $request->user()->update($request->all());
         return ResponseBuilder::success();
     }
 }

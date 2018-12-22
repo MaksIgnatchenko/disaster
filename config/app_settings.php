@@ -14,4 +14,6 @@ return [
 	'morning_push_time' => '08:00',
 
 	'evening_push_time' => '20:00',
+
+    'itunes_shared_secret' => env('ITUNES_SHARED_SECRET'),
 ];

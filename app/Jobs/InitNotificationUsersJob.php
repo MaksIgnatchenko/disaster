@@ -22,7 +22,8 @@ class InitNotificationUsersJob implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @return void
+     * InitNotificationUsersJob constructor.
+     * @param string $userModelName
      */
     public function __construct(string $userModelName)
     {

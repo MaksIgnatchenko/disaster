@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Collection;
 
 class User extends Model
 {
@@ -23,14 +24,27 @@ class User extends Model
         'deviceId',
         'pushToken',
         'receipt',
-        'receiptSecret',
         'expirationDate',
+    ];
+
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'id',
+        'receipt',
+        'pushToken',
+        'deviceId',
+        'created_at',
+        'updated_at',
     ];
 
     /**
      * @return BelongsToMany
      */
-    public function locations() : BelongsToMany
+    public function locations(): BelongsToMany
     {
         return $this->belongsToMany('App\Location');
     }
@@ -38,7 +52,7 @@ class User extends Model
     /**
      * @return HasOne
      */
-    public function settings() : HasOne
+    public function settings(): HasOne
     {
         return $this->hasOne('App\Settings');
     }
@@ -47,7 +61,7 @@ class User extends Model
      * @param $query
      * @return Builder
      */
-    public function scopeActive($query) : Builder
+    public function scopeActive($query): Builder
     {
         return $query
             ->whereDate('expirationDate', '>=', Carbon::today()->toDateString())

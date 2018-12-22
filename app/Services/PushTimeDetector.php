@@ -10,10 +10,25 @@ use Carbon\Carbon;
 
 class PushTimeDetector
 {
+    /**
+     * @var string
+     */
 	private $userTimeZone;
+
+    /**
+     * @var \Illuminate\Config\Repository|mixed
+     */
 	private $morningPushTime;
+
+    /**
+     * @var \Illuminate\Config\Repository|mixed
+     */
 	private $eveningPushTime;
 
+    /**
+     * PushTimeDetector constructor.
+     * @param string $userTimeZone
+     */
 	public function __construct(string $userTimeZone = 'Europe/London')
 	{
 		$this->userTimeZone = $userTimeZone;

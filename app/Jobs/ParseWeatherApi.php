@@ -54,7 +54,6 @@ class ParseWeatherApi implements ShouldQueue
             'filter' => 'day',
         ]);
         $this->apiHandler->setFields([
-            'loc',
             'timestamp',
             'periods.minTempC',
             'periods.maxTempC',
@@ -91,8 +90,8 @@ class ParseWeatherApi implements ShouldQueue
             }
             for ($i = 0; $i < count($batchRequestLocations); $i++) {
                 $key = $batchRequestLocations[$i]['id'];
-                if ($forecasts[$i]['success']) {
-                    $resultSet[$key] = $forecasts[$i]['response'][0]['periods'][0];
+                if ($forecasts['responses'][$i]['success']) {
+                    $resultSet[$key] = $forecasts['responses'][$i]['response'][0]['periods'][0];
                 }
             }
         }

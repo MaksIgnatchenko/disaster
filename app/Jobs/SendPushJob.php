@@ -40,7 +40,7 @@ class SendPushJob implements ShouldQueue
      * @param string $title
      * @param string $message
      */
-    public function __construct(string  $token, string $title, string $message)
+    public function __construct(string $token, string $title, string $message)
     {
         $this->token = $token;
         $this->messageParams = [

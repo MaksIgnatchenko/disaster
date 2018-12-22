@@ -20,6 +20,7 @@ class CheckSubscription implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private $user;
+    private $sharedSecret;
 
     /**
      * CheckSubscription constructor.
@@ -28,6 +29,7 @@ class CheckSubscription implements ShouldQueue
     public function __construct(User $user)
     {
         $this->user = $user;
+        $this->sharedSecret = config('app_settings.itunes_shared_secret');
     }
 
     /**
@@ -37,9 +39,9 @@ class CheckSubscription implements ShouldQueue
      */
     public function handle()
     {
-            $receiptValidator = new ReceiptValidator($this->user->receipt, $this->user->receiptSecret);
+            $receiptValidator = new ReceiptValidator($this->user->receipt, $this->sharedSecret);
             $expirationTimestamp = $receiptValidator->getExpiresDate();
-            $this->user->expirationDate = Carbon::createFromTimestamp(1543968000)->toDateTimeString();
+            $this->user->expirationDate = Carbon::createFromTimestamp($expirationTimestamp)->toDateTimeString();
             $this->user->save();
     }
 }

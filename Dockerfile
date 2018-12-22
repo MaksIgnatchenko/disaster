@@ -22,6 +22,7 @@ RUN apt-get update && \
         libssl-dev \
         libmcrypt-dev \
         openssh-server \
+        gnupg \
         swig \
         cmake \
         wget \
@@ -54,6 +55,12 @@ RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql
 RUN docker-php-ext-install pdo pdo_pgsql
 
 RUN docker-php-ext-install zip
+
+# Install node, npm, apidoc and create apidoc
+RUN curl -sL https://deb.nodesource.com/setup_9.x \
+    apt-get install nodejs && \
+    npm install apidoc -g && \
+    apidoc -i docs -o public/apidoc
 
 #####################################
 # Final Touch:

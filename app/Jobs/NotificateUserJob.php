@@ -48,23 +48,23 @@ class NotificateUserJob implements ShouldQueue
      */
     public function handle()
     {
-    	$timeDetector = new PushTimeDetector($this->user->settings->timezone);
+        $pushTimeDetector = new PushTimeDetector($this->user->settings->timezone);
         $locations = $this->user->locations;
         $countries = $this->user->locations->pluck('country');
         $disasterCategories = $this->user->settings->disasterCategories;
         $disasters = $this->disasterModelName::whereIn('country', $countries)
             ->whereIn('category_code', $disasterCategories)
             ->get();
-        foreach($disasters as $disaster) {
+        foreach ($disasters as $disaster) {
             $title = $disaster->category . ' in ' . $disaster->country . ' ' . $disaster->event_date;
             $message = mb_substr($disaster->description, 0, 100) . ' ...';
             SendPushJob::dispatch(
                 $this->user->pushToken,
                 $title,
                 $message
-            )->delay(now()->addMinutes($timeDetector->getRemainingMinutes()));
+            )->delay(now()->addMinutes($pushTimeDetector->getRemainingMinutes()));
         }
         ParseWeatherApi::dispatch(new AerisWeather(), $locations, $this->user)
-			->delay(now()->addMinutes($timeDetector->getRemainingMinutes()));
+            ->delay(now()->addMinutes($pushTimeDetector->getRemainingMinutes()));
     }
 }

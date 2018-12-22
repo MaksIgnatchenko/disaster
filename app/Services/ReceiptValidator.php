@@ -7,9 +7,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Log;
-use ReceiptValidator\iTunes\PendingRenewalInfo;
 use ReceiptValidator\iTunes\Validator as iTunesValidator;
-use ReceiptValidator\RunTimeException;
 
 class ReceiptValidator
 {
@@ -33,7 +31,7 @@ class ReceiptValidator
     /**
      * Get current status of user's renewable subscription.
      *
-     * @return string|null
+//     * @return string|null
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getExpiresDate()
@@ -46,7 +44,9 @@ class ReceiptValidator
             Log::error('Unable to get response from itunes server');
             return null;
         }
-        return $response;
-//        return $response['expires_date'] ?? null;
+        $subscriptions = $response['latest_receipt_info'];
+        $lastSubscription = end($subscriptions);
+        // Transform ms to s (/1000)
+        return $lastSubscription['expires_date_ms'] / 1000 ?? null;
     }
 }

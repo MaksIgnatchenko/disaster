@@ -29,6 +29,19 @@ class Settings extends Model
 		'disasterCategories',
     ];
 
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'id',
+        'user_id',
+        'created_at',
+        'updated_at',
+        'receipt',
+    ];
+
 	/**
 	 * The attributes that should be cast to native types.
 	 *

@@ -16,7 +16,7 @@ class UpdateUserRequest extends UserRequestAbstract
     public function rules() : array
     {
         $otherRules = [
-            'deviceId' => 'string|min:1|max:255'
+            'deviceId' => 'string|min:1|max:255|unique:users,deviceId,' . $this->user()->id,
         ];
         return array_merge($otherRules, parent::rules());
     }

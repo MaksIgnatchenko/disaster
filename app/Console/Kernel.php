@@ -31,20 +31,19 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-//        $schedule->job(
-//            new ParseDisasterApi(new HiszRsoeApiHandler(), Disaster::class)
-//        )->hourly();
-//
-//        $schedule->job(
-//            new CheckUsersSubscriptions()
-//        )->twiceDaily(1, 13);
-//
-//        $schedule->job(
-//            new InitNotificationUsersJob(User::class)
-//        )->twiceDaily(2, 14);
-//
-//        $schedule->command('horizon:snapshot')->hourly();
-		$schedule->job(new Test())->everyMinute();
+        $schedule->job(
+            new ParseDisasterApi(new HiszRsoeApiHandler(), Disaster::class)
+        )->hourly();
+
+        $schedule->job(
+            new CheckUsersSubscriptions()
+        )->twiceDaily(1, 13);
+
+        $schedule->job(
+            new InitNotificationUsersJob(User::class)
+        )->twiceDaily(2, 14);
+
+        $schedule->command('horizon:snapshot')->hourly();
     }
 
     /**

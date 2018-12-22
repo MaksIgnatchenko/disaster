@@ -144,7 +144,11 @@ class AerisWeather implements WeatherHandlerInterface
             	throw new AerisApiResponseErrorException('Aeris api error' . $result['error']['description']);
 			};
             $this->httpResponse = null;
-            return $result['response']['responses'] ?? [];
+            if ($result['response']['responses'] ?? null) {
+                return $result['response'];
+            }
+            return [
+                'responses' => [$result]];
         }
         return [];
     }
